@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt"
-const userSchema = new mongoose.Schema({
+const ownerSchema = new mongoose.Schema({
     avatar: {
         type: String,
         require: true
@@ -25,23 +25,27 @@ const userSchema = new mongoose.Schema({
         type: String,
         require: true
     },
-    orders: [{
+    products: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Product",
     }],
-    cart: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
-    }]
+    gstin: {
+        type: String,
+        require: true
+    },
+    bankAccount: {
+        type: String,
+        require: true
+    },
 });
 
-const User = mongoose.model("User", userSchema);
+const owner = mongoose.model("owner", ownerSchema);
 
-export default User;
+export default owner;
 
 // helper Functions
 
-userSchema.pre("save", async function (next) {
+ownerSchema.pre("save", async function (next) {
     if (this.isModified("password")) {
         bcrypt.hash(this.password, 11)
             .then((data) => {
@@ -49,7 +53,7 @@ userSchema.pre("save", async function (next) {
                 next();
             })
             .catch((err) => {
-                console.log("Error In User save Pre MiddlesWare" + err);
+                console.log("Error In owner save Pre MiddlesWare" + err);
                 next(err);
             })
     }
